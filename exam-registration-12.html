@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Registration – Deutsche Höhere Privatschule Windhoek</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --navy-light: #243460;
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --gold-pale: #f9f3e3;
+    --white: #ffffff;
+    --grey-bg: #f4f6f9;
+    --grey-border: #dde2ec;
+    --grey-text: #6b7a99;
+    --red: #c0392b;
+    --green: #27ae60;
+    --text: #1a2744;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--grey-bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .app-header {
+    background: var(--navy);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  }
+  .app-header .school-name {
+    color: var(--white);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+  }
+  .app-header .school-sub {
+    color: var(--gold);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .cambridge-badge {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--gold-light);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    opacity: 0.85;
+  }
+
+  /* ── Progress bar ── */
+  .progress-wrap {
+    background: var(--navy-light);
+    padding: 0 32px;
+  }
+  .progress-steps {
+    display: flex;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .step-tab {
+    flex: 1;
+    padding: 13px 8px;
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+    cursor: default;
+  }
+  .step-tab.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+  .step-tab.done {
+    color: rgba(255,255,255,0.65);
+    border-bottom-color: rgba(255,255,255,0.2);
+  }
+
+  /* ── Main container ── */
+  .container {
+    max-width: 900px;
+    margin: 32px auto;
+    padding: 0 20px 60px;
+  }
+
+  /* ── Screen card ── */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn 0.35s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+  .card {
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 2px 18px rgba(26,39,68,0.09);
+    overflow: hidden;
+  }
+
+  .card-header {
+    background: var(--navy);
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .card-header h2 {
+    color: var(--white);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+  }
+  .card-header .step-num {
+    background: var(--gold);
+    color: var(--navy);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .card-body { padding: 30px; }
+
+  /* ── Form elements ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 24px;
+  }
+  .form-grid.single { grid-template-columns: 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  label .req { color: var(--red); margin-left: 2px; }
+
+  input[type="text"], input[type="email"], input[type="tel"],
+  input[type="date"], select, textarea {
+    border: 1.5px solid var(--grey-border);
+    border-radius: 6px;
+    padding: 10px 13px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.92rem;
+    color: var(--text);
+    background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--navy);
+    box-shadow: 0 0 0 3px rgba(26,39,68,0.08);
+  }
+  input.error, select.error { border-color: var(--red); }
+  .error-msg { font-size: 0.75rem; color: var(--red); margin-top: 3px; display: none; }
+  .error-msg.show { display: block; }
+
+  .section-divider {
+    border: none;
+    border-top: 1.5px solid var(--grey-border);
+    margin: 26px 0;
+  }
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  .hint {
+    font-size: 0.8rem;
+    color: var(--grey-text);
+    line-height: 1.5;
+    background: var(--gold-pale);
+    border-left: 3px solid var(--gold);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 20px;
+  }
+
+  /* ── Subject selection ── */
+  .subject-intro {
+    font-size: 0.85rem;
+    color: var(--grey-text);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .subject-group-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 10px 0 8px;
+    border-bottom: 1px solid var(--gold-pale);
+    margin-bottom: 6px;
+  }
+
+  .subject-list { margin-bottom: 8px; }
+
+  .subject-row {
+    display: flex;
+    align-items: center;
+    padding: 11px 14px;
+    border: 1.5px solid var(--grey-border);
+    border-radius: 7px;
+    margin-bottom: 7px;
+    cursor: pointer;
+    transition: all 0.18s;
+    gap: 14px;
+    background: var(--white);
+  }
+  .subject-row:hover:not(.full-row) { border-color: var(--navy); background: #f7f9fc; }
+  .subject-row.selected { border-color: var(--navy); background: #eef1f8; }
+  .subject-row.full-row { opacity: 0.42; cursor: not-allowed; background: #f8f8f8; }
+  .subject-row.syllabus-locked { opacity: 0.35; cursor: not-allowed; background: #f8f8f8; border-style: dashed; }
+
+  .group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--navy);
+    color: var(--white);
+    padding: 12px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+    margin-top: 8px;
+    transition: background 0.2s;
+    user-select: none;
+  }
+  .group-header:hover { background: var(--navy-light); }
+  .group-header.has-selection { background: var(--gold); color: var(--navy); }
+  .group-arrow { transition: transform 0.25s; font-size: 0.75rem; }
+  .group-header.collapsed .group-arrow { transform: rotate(-90deg); }
+  .group-body { display: block; margin-bottom: 4px; }
+  .group-body.collapsed { display: none; }
+
+  .subject-row input[type="checkbox"] { display: none; }
+
+  .subject-checkbox {
+    width: 20px; height: 20px;
+    border: 2px solid var(--grey-border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.18s;
+    background: var(--white);
+  }
+  .subject-row.selected .subject-checkbox {
+    background: var(--navy);
+    border-color: var(--navy);
+  }
+  .subject-row.selected .subject-checkbox::after {
+    content: '✓';
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .subject-name { flex: 1; font-size: 0.9rem; font-weight: 500; }
+  .subject-code { font-size: 0.75rem; color: var(--grey-text); margin-left: 4px; font-weight: 400; }
+  .subject-price {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+  }
+  .subject-full-tag {
+    font-size: 0.65rem;
+    background: #fdecea;
+    color: var(--red);
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── Running total bar ── */
+  .total-bar {
+    position: sticky;
+    bottom: 0;
+    background: var(--navy);
+    border-radius: 8px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    box-shadow: 0 -4px 20px rgba(26,39,68,0.15);
+  }
+  .total-bar .total-info { color: rgba(255,255,255,0.7); font-size: 0.82rem; }
+  .total-bar .total-info strong { color: var(--gold); }
+  .total-bar .total-amount {
+    font-family: 'Playfair Display', serif;
+    color: var(--white);
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+  .total-bar .total-amount span { color: var(--gold); }
+
+  /* ── Previous Cambridge fields ── */
+  .cambridge-section {
+    background: var(--gold-pale);
+    border: 1px solid #e8d9a0;
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 22px;
+  }
+  .cambridge-section p {
+    font-size: 0.82rem;
+    color: var(--grey-text);
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+
+  /* ── Upload section ── */
+  .upload-area {
+    border: 2px dashed var(--grey-border);
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #fafbfc;
+  }
+  .upload-area:hover { border-color: var(--navy); background: #f0f3fa; }
+  .upload-area input { display: none; }
+  .upload-icon { font-size: 2rem; margin-bottom: 8px; }
+  .upload-area p { font-size: 0.85rem; color: var(--grey-text); }
+  .upload-area strong { color: var(--navy); }
+  .file-list { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .file-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--grey-bg); border-radius: 6px;
+    padding: 8px 12px; font-size: 0.82rem;
+  }
+  .file-item .file-name { flex: 1; font-weight: 500; color: var(--navy); }
+  .file-item .remove-file {
+    color: var(--red); cursor: pointer; font-size: 1.1rem; line-height: 1;
+    background: none; border: none; padding: 0;
+  }
+
+  /* ── Terms ── */
+  .terms-box {
+    border: 1.5px solid var(--grey-border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin: 22px 0;
+    font-size: 0.83rem;
+    line-height: 1.7;
+    color: #444;
+    background: #fafbfc;
+  }
+  .terms-box ul { padding-left: 18px; margin-top: 6px; }
+  .terms-box ul li { margin-bottom: 4px; }
+
+  .checkbox-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    margin-top: 16px;
+  }
+  .checkbox-row input[type="checkbox"] {
+    width: 18px; height: 18px;
+    flex-shrink: 0; cursor: pointer;
+    margin-top: 2px;
+    accent-color: var(--navy);
+  }
+  .checkbox-row span { font-size: 0.85rem; line-height: 1.5; color: var(--text); }
+
+  /* ── Fee summary ── */
+  .fee-summary {
+    background: var(--navy);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 22px;
+  }
+  .fee-summary h4 {
+    color: var(--gold);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .fee-line {
+    display: flex;
+    justify-content: space-between;
+    color: rgba(255,255,255,0.75);
+    font-size: 0.85rem;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .fee-line:last-child { border-bottom: none; }
+  .fee-total-line {
+    display: flex;
+    justify-content: space-between;
+    color: var(--white);
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding: 12px 0 0;
+    margin-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    font-family: 'Playfair Display', serif;
+  }
+  .fee-total-line span:last-child { color: var(--gold); }
+
+  /* ── Buttons ── */
+  .btn-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    gap: 12px;
+  }
+  .btn-row.right { justify-content: flex-end; }
+
+  .btn {
+    padding: 12px 28px;
+    border-radius: 7px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .btn-primary:hover { background: var(--navy-light); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,39,68,0.25); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--navy);
+    border: 1.5px solid var(--grey-border);
+  }
+  .btn-secondary:hover { border-color: var(--navy); background: #f0f3fa; }
+  .btn-submit {
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 700;
+  }
+  .btn-submit:hover { background: var(--gold-light); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(201,168,76,0.35); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+
+  /* ── Thank you screen ── */
+  .thankyou-card {
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 2px 18px rgba(26,39,68,0.09);
+    padding: 60px 40px;
+    text-align: center;
+  }
+  .thankyou-icon {
+    width: 72px; height: 72px;
+    background: var(--green);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 2rem;
+  }
+  .thankyou-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--navy);
+    margin-bottom: 16px;
+  }
+  .thankyou-card p {
+    font-size: 0.95rem;
+    color: var(--grey-text);
+    line-height: 1.7;
+    max-width: 560px;
+    margin: 0 auto 14px;
+  }
+  .thankyou-card .warning-box {
+    background: #fff8e6;
+    border: 1.5px solid var(--gold);
+    border-radius: 8px;
+    padding: 16px 22px;
+    margin: 24px auto 0;
+    max-width: 560px;
+    font-size: 0.85rem;
+    color: var(--navy);
+    line-height: 1.6;
+  }
+  .ref-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--navy);
+    background: var(--gold-pale);
+    border: 1.5px solid var(--gold);
+    border-radius: 6px;
+    padding: 10px 24px;
+    display: inline-block;
+    margin: 20px 0;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .card-body { padding: 20px; }
+    .app-header { padding: 14px 18px; }
+    .cambridge-badge { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="app-header">
+  <div>
+    <div class="school-name">Deutsche Höhere Privatschule Windhoek</div>
+    <div class="school-sub">Cambridge International Examination Registration</div>
+  </div>
+  <div class="cambridge-badge">
+    ✦ Cambridge Assessment International Education
+  </div>
+</header>
+
+<!-- Registration status banner -->
+<div id="status-banner" style="display:none;"></div>
+
+<!-- Progress -->
+<div class="progress-wrap">
+  <div class="progress-steps">
+    <div class="step-tab active" id="tab-1">1. Candidate Details</div>
+    <div class="step-tab" id="tab-2">2. Subject Selection</div>
+    <div class="step-tab" id="tab-3">3. Payment & Uploads</div>
+    <div class="step-tab" id="tab-4">4. Confirmation</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════════
+       SCREEN 1: Candidate Details
+  ══════════════════════════════════════ -->
+  <div class="screen active" id="screen-1">
+    <div class="card">
+      <div class="card-header">
+        <div class="step-num">1</div>
+        <h2>Candidate Details</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Surname <span class="req">*</span><br><small style="font-size:0.7rem;color:var(--grey-text);text-transform:none;font-weight:400;">As per birth certificate</small></label>
+            <input type="text" id="surname" placeholder="Candidate's surname">
+            <span class="error-msg" id="err-surname">Please enter the candidate's surname</span>
+          </div>
+          <div class="form-group">
+            <label>First & All Middle Names <span class="req">*</span><br><small style="font-size:0.7rem;color:var(--grey-text);text-transform:none;font-weight:400;">As per birth certificate</small></label>
+            <input type="text" id="firstname" placeholder="First and all middle names">
+            <span class="error-msg" id="err-firstname">Please enter the candidate's first name(s)</span>
+          </div>
+          <div class="form-group">
+            <label>Email Address <span class="req">*</span><br><small style="font-size:0.7rem;color:var(--grey-text);text-transform:none;font-weight:400;">Used for ALL correspondence</small></label>
+            <input type="email" id="email" placeholder="Candidate's email address">
+            <span class="error-msg" id="err-email">Please enter a valid email address</span>
+          </div>
+          <div class="form-group">
+            <label>Cellphone Number <span class="req">*</span></label>
+            <input type="tel" id="phone" placeholder="e.g. (264)813133113" oninput="formatPhone(this)">
+            <span style="font-size:0.72rem;color:var(--grey-text);margin-top:2px;">Format: (country code) number without leading 0 — e.g. (264)813133113</span>
+            <span class="error-msg" id="err-phone">Please enter a valid number in the format (264)813133113</span>
+          </div>
+          <div class="form-group">
+            <label>Gender <span class="req">*</span></label>
+            <select id="gender">
+              <option value="">Select gender</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+            </select>
+            <span class="error-msg" id="err-gender">Please select a gender</span>
+          </div>
+          <div class="form-group">
+            <label>Date of Birth <span class="req">*</span></label>
+            <input type="date" id="dob">
+            <span class="error-msg" id="err-dob">Please enter the date of birth</span>
+          </div>
+        </div>
+
+        <hr class="section-divider">
+        <div class="section-label">Access Arrangements</div>
+        <div id="access-closed-notice" style="display:none;background:#fdecea;border:1.5px solid var(--red);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.85rem;color:var(--red);font-weight:600;">
+          ⚠ The deadline for access arrangement requests was 17 July 2026. Access arrangements can no longer be applied for in this registration period.
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Do you need Access Arrangements? <span class="req">*</span></label>
+            <select id="access">
+              <option value="No">No, I do not</option>
+              <option value="Extra time 25%">Extra time (25%)</option>
+              <option value="Extra time 50%">Extra time (50%)</option>
+              <option value="Reader">Reader</option>
+              <option value="Scribe">Scribe</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Is English your first language? <span class="req">*</span></label>
+            <select id="english">
+              <option value="Yes">English First Language – Yes</option>
+              <option value="No">English First Language – No</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="hint" style="margin-top:14px;">
+          <strong>Note on Access Arrangements:</strong> These are the only access arrangements offered during the Oct/Nov exam series. For additional arrangements, please register during the May/Jun series. Proof must be uploaded with this application and cannot be sent later.
+        </div>
+
+        <hr class="section-divider">
+        <div class="section-label">Emergency Contact</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Alternate Emergency Number <span class="req">*</span></label>
+            <input type="tel" id="alt-phone" placeholder="e.g. (264)813133113" oninput="formatPhone(this)">
+            <span style="font-size:0.72rem;color:var(--grey-text);margin-top:2px;">Format: (country code) number without leading 0 — e.g. (264)813133113</span>
+            <span class="error-msg" id="err-alt-phone">Please enter a valid number in the format (264)813133113</span>
+          </div>
+          <div class="form-group">
+            <label>Name & Relationship <span class="req">*</span></label>
+            <input type="text" id="alt-contact" placeholder="Name and relationship of contact">
+            <span class="error-msg" id="err-alt-contact">Please enter the name and relationship of the emergency contact</span>
+          </div>
+        </div>
+
+        <hr class="section-divider">
+        <div class="section-label">Centre / School</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Candidate's Centre <span class="req">*</span></label>
+            <select id="centre" onchange="toggleOtherCentre()">
+              <option value="Private Candidate">Private Candidate</option>
+              <option value="Admoveo">Admoveo</option>
+              <option value="Athena Academy">Athena Academy</option>
+              <option value="Cedar Heights">Cedar Heights</option>
+              <option value="Crecer">Crecer</option>
+              <option value="Educer">Educer</option>
+              <option value="Edvantage">Edvantage</option>
+              <option value="Elyatsar">Elyatsar</option>
+              <option value="Eran">Eran</option>
+              <option value="Future Learning Institute">Future Learning Institute</option>
+              <option value="Goldridge">Goldridge</option>
+              <option value="Hoperise">Hoperise</option>
+              <option value="Horizon">Horizon</option>
+              <option value="IA-Academy">IA-Academy</option>
+              <option value="International School Walvis Bay">International School Walvis Bay</option>
+              <option value="Niro">Niro</option>
+              <option value="Platonic Academy">Platonic Academy</option>
+              <option value="Poise Institute of Learning">Poise Institute of Learning</option>
+              <option value="Rosewood Academy">Rosewood Academy</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group" id="other-centre-group" style="display:none;">
+            <label>Please specify your centre <span class="req">*</span></label>
+            <input type="text" id="other-centre" placeholder="Enter your centre name">
+            <span class="error-msg" id="err-other-centre">Please enter your centre name</span>
+          </div>
+        </div>
+
+        <div class="btn-row right">
+          <button class="btn btn-primary" onclick="goToScreen(2)">Next: Subject Selection →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 2: Subject Selection
+  ══════════════════════════════════════ -->
+  <div class="screen" id="screen-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="step-num">2</div>
+        <h2>Subject Selection</h2>
+      </div>
+      <div class="card-body">
+
+        <div class="cambridge-section">
+          <p>If you were enrolled in the <strong>May/Jun 2026</strong> or <strong>Oct/Nov 2025</strong> Cambridge International Exam Series, please enter your previous details below.<br>
+          <em>If both fields are left blank, previous exam details will not be added to your registration.</em></p>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Previous Cambridge Centre Number</label>
+              <input type="text" id="prev-centre" placeholder="Previous Cambridge centre number">
+            </div>
+            <div class="form-group">
+              <label>Previous Cambridge Candidate Number</label>
+              <input type="text" id="prev-candidate" placeholder="Previous Cambridge candidate number">
+            </div>
+          </div>
+        </div>
+
+        <p class="subject-intro">Please scroll down and select all subjects you wish to register for. The total payable will update automatically.</p>
+
+        <div style="background:#fff8e6;border:1.5px solid var(--gold);border-radius:8px;padding:14px 18px;margin-bottom:18px;font-size:0.82rem;line-height:1.65;color:var(--navy);">
+          <strong>⚠ Important notices:</strong>
+          <ul style="margin-top:6px;padding-left:18px;">
+            <li><strong>The onus for correct subject and component selection rests solely with the candidate.</strong> DHPS accepts no responsibility for incorrect selections made during registration.</li>
+            <li>If a subject does not appear on the list below, we either do not offer it as an external examination centre, or all available places in that subject have been filled.</li>
+            <li>Once a subject from a syllabus group is selected, other options within the same syllabus are automatically disabled — you may only register for one option per syllabus.</li>
+          </ul>
+        </div>
+
+        <!-- IGCSE Subjects -->
+        <div class="group-header" onclick="toggleGroup('igcse-ac')">
+          <span>IGCSE Subjects: A – C</span><span class="group-arrow">▼</span>
+        </div>
+        <div class="subject-list group-body" id="igcse-ac"></div>
+
+        <div class="group-header" onclick="toggleGroup('igcse-ei')">
+          <span>IGCSE Subjects: E – I</span><span class="group-arrow">▼</span>
+        </div>
+        <div class="subject-list group-body" id="igcse-ei"></div>
+
+        <div class="group-header" onclick="toggleGroup('igcse-lt')">
+          <span>IGCSE Subjects: L – T</span><span class="group-arrow">▼</span>
+        </div>
+        <div class="subject-list group-body" id="igcse-lt"></div>
+
+        <!-- AS / A Level Subjects -->
+        <div class="group-header" style="margin-top:12px;" onclick="toggleGroup('al-ac')">
+          <span>AS & A Level Subjects: A – C</span><span class="group-arrow">▼</span>
+        </div>
+        <div class="subject-list group-body" id="al-ac"></div>
+
+        <div class="group-header" onclick="toggleGroup('al-eh')">
+          <span>AS & A Level Subjects: E – H</span><span class="group-arrow">▼</span>
+        </div>
+        <div class="subject-list group-body" id="al-eh"></div>
+
+        <div class="group-header" onclick="toggleGroup('al-it')">
+          <span>AS & A Level Subjects: I – T</span><span class="group-arrow">▼</span>
+        </div>
+        <div class="subject-list group-body" id="al-it"></div>
+
+        <div class="total-bar">
+          <div class="total-info">
+            <strong id="subject-count">0</strong> subject(s) selected
+          </div>
+          <div class="total-amount">Total: <span id="running-total">N$0</span></div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goToScreen(1)">← Back</button>
+          <button class="btn btn-primary" id="btn-to-payment" onclick="goToScreen(3)" disabled>Next: Payment & Uploads →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 3: Payment & Uploads
+  ══════════════════════════════════════ -->
+  <div class="screen" id="screen-3">
+    <div class="card">
+      <div class="card-header">
+        <div class="step-num">3</div>
+        <h2>Payment & Uploads</h2>
+      </div>
+      <div class="card-body">
+
+        <div class="fee-summary" id="fee-summary">
+          <h4>Registration Fee Summary</h4>
+          <div id="fee-lines"></div>
+          <div class="fee-total-line">
+            <span>Total Fee Payable</span>
+            <span id="fee-total-display">N$0</span>
+          </div>
+        </div>
+
+        <hr class="section-divider">
+        <div class="section-label">Banking Details</div>
+        <div style="background:var(--gold-pale);border:1.5px solid #e8d9a0;border-radius:8px;padding:18px 22px;margin-bottom:22px;font-size:0.88rem;line-height:1.9;">
+          <div style="display:grid;grid-template-columns:160px 1fr;gap:2px 12px;">
+            <span style="color:var(--grey-text);font-size:0.78rem;text-transform:uppercase;font-weight:600;">Account Name</span>
+            <span style="font-weight:600;color:var(--navy);">Deutscher Schulverein Windhoek (1949)</span>
+            <span style="color:var(--grey-text);font-size:0.78rem;text-transform:uppercase;font-weight:600;">Bank</span>
+            <span>FNB Namibia</span>
+            <span style="color:var(--grey-text);font-size:0.78rem;text-transform:uppercase;font-weight:600;">Account Number</span>
+            <span>6209 367 0472 <span style="font-size:0.75rem;color:var(--grey-text);">(Current Account)</span></span>
+            <span style="color:var(--grey-text);font-size:0.78rem;text-transform:uppercase;font-weight:600;">Branch Code</span>
+            <span>281-872</span>
+            <span style="color:var(--grey-text);font-size:0.78rem;text-transform:uppercase;font-weight:600;">Reference</span>
+            <span><strong>SurnameInitialCIEExam</strong> <span style="font-size:0.75rem;color:var(--grey-text);">(e.g. <strong>BothaECIEExam</strong>)</span></span>
+          </div>
+          <div id="payment-fee-reminder" style="margin-top:14px;padding-top:12px;border-top:1px solid #e8d9a0;font-size:0.9rem;">
+            <span style="color:var(--grey-text);">Total amount to pay:</span>
+            <span id="payment-total-amount" style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--navy);margin-left:8px;">N$0</span>
+          </div>
+        </div>
+
+        <hr class="section-divider">
+        <div class="section-label">Required Documents</div>
+        <p style="font-size:0.83rem;color:var(--grey-text);margin-bottom:16px;">Please upload the following documents. Your registration will not be processed until both documents are received.</p>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Birth Certificate <span class="req">*</span></label>
+            <div class="upload-area" onclick="document.getElementById('upload-birth').click()">
+              <input type="file" id="upload-birth" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload('birth', this)">
+              <div class="upload-icon">📄</div>
+              <p><strong>Click to upload</strong> or drag & drop</p>
+              <p>PDF, JPG or PNG accepted</p>
+            </div>
+            <div class="file-list" id="birth-files"></div>
+            <span class="error-msg" id="err-birth">Please upload the birth certificate</span>
+          </div>
+          <div class="form-group">
+            <label>Proof of Payment <span class="req">*</span></label>
+            <div class="upload-area" onclick="document.getElementById('upload-payment').click()">
+              <input type="file" id="upload-payment" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload('payment', this)">
+              <div class="upload-icon">💳</div>
+              <p><strong>Click to upload</strong> or drag & drop</p>
+              <p>PDF, JPG or PNG accepted</p>
+            </div>
+            <div class="file-list" id="payment-files"></div>
+            <span class="error-msg" id="err-payment">Please upload proof of payment</span>
+          </div>
+        </div>
+
+        <div id="access-upload-section" style="display:none; margin-top:20px;">
+          <div class="form-group">
+            <label>Access Arrangement Proof <span class="req">*</span></label>
+            <div class="upload-area" onclick="document.getElementById('upload-access').click()">
+              <input type="file" id="upload-access" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload('access', this)">
+              <div class="upload-icon">📋</div>
+              <p><strong>Click to upload</strong> access arrangement documentation</p>
+            </div>
+            <div class="file-list" id="access-files"></div>
+          </div>
+        </div>
+
+        <hr class="section-divider">
+        <div class="section-label">Declaration</div>
+
+        <div class="terms-box">
+          By submitting this registration, I confirm that:
+          <ul>
+            <li>All the information provided in this form is correct and complete.</li>
+            <li>I understand that overpayment or cancellation of subjects before the closing date for registrations will incur a minimum administration fee of <strong>N$500</strong>.</li>
+            <li>I further understand that after the registration date has passed, all fees are <strong>non-refundable</strong>.</li>
+          </ul>
+        </div>
+
+        <label class="checkbox-row">
+          <input type="checkbox" id="terms-check" onchange="updateSubmitBtn()">
+          <span>I have read and agree to the above declaration, and certify that all provided information is correct.</span>
+        </label>
+        <span class="error-msg" id="err-terms">You must accept the declaration to proceed</span>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goToScreen(2)">← Back</button>
+          <button class="btn btn-submit" id="btn-submit" onclick="submitRegistration()" disabled>Submit Registration ✓</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 4: Thank You
+  ══════════════════════════════════════ -->
+  <div class="screen" id="screen-4">
+    <div class="thankyou-card">
+      <div class="thankyou-icon">✓</div>
+      <h2>Thank you for your submission.</h2>
+      <p>Your examination registration has been received by Deutsche Höhere Privatschule Windhoek.</p>
+      <div class="ref-number" id="ref-display">REF: DHPS-2026-0001</div>
+      <p style="font-size:1.1rem;font-weight:700;color:var(--navy);margin:10px auto;text-align:center;max-width:560px;">Please save a screenshot of this page as proof that your registration was submitted.</p>
+      <div class="warning-box">
+        ⚠️ <strong>Important:</strong> Your registration will only be processed if all required documents have been uploaded <em>and</em> all fees have been paid. Please ensure your proof of payment reflects the correct amount shown in your fee summary.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ── Dates ──
+const OPEN_DATE         = new Date('2026-06-05T00:00:00');  // Registration opens — TEMP: set to today for testing, change back to 2026-06-10 before go-live
+const ACCESS_DEADLINE   = new Date('2026-07-17T23:59:59');  // Access arrangements cutoff & standard close
+const LATE_DEADLINE     = new Date('2026-08-07T23:59:59');  // Late registration closes
+const LATE_FEE_SURCHARGE = 1250;                            // N$ surcharge per subject during late period
+const NOW = new Date();
+const IS_NOT_OPEN   = NOW < OPEN_DATE;
+const IS_STANDARD   = NOW >= OPEN_DATE && NOW <= ACCESS_DEADLINE;
+const IS_LATE       = NOW > ACCESS_DEADLINE && NOW <= LATE_DEADLINE;
+const IS_CLOSED     = NOW > LATE_DEADLINE;
+const ACCESS_OPEN   = NOW <= ACCESS_DEADLINE;
+
+// ── Subject data ──
+// syllabus: subjects sharing the same syllabus number cannot be selected together
+const SUBJECTS = {
+  igcse_ac: [
+    { name: "IGCSE Accounting",                                               code: "0452/AY",    price: 3750, max: 93,  syllabus: "0452" },
+    { name: "IGCSE Additional Mathematics",                                   code: "0606/AY",    price: 3750, max: 100, syllabus: "0606" },
+    { name: "IGCSE Afrikaans as a Second Language",                           code: "0548/A",     price: 3750, max: 100, syllabus: "0548" },
+    { name: "IGCSE Biology Extended",                                         code: "0610/CY",    price: 3750, max: 86,  syllabus: "0610" },
+    { name: "IGCSE Biology Core",                                             code: "0610/GY",    price: 3750, max: 86,  syllabus: "0610" },
+    { name: "IGCSE Business Studies",                                         code: "0450/X",     price: 3750, max: 93,  syllabus: "0450" },
+    { name: "IGCSE Cambridge International Mathematics Extended",             code: "0607/BX",    price: 3750, max: 100, syllabus: "0607" },
+    { name: "IGCSE Cambridge International Mathematics Core",                 code: "0607/AX",    price: 3750, max: 100, syllabus: "0607" },
+    { name: "IGCSE Chemistry Extended",                                       code: "0620/CY",    price: 3750, max: 81,  syllabus: "0620" },
+    { name: "IGCSE Chemistry Core",                                           code: "0620/GY",    price: 3750, max: 81,  syllabus: "0620" },
+    { name: "IGCSE Combined Science Extended",                                code: "0653/CX",    price: 3750, max: 100, syllabus: "0653" },
+    { name: "IGCSE Combined Science Core",                                    code: "0653/GX",    price: 3750, max: 100, syllabus: "0653" },
+    { name: "IGCSE Computer Science",                                         code: "0478/AY",    price: 3750, max: 90,  syllabus: "0478" },
+    { name: "IGCSE Co-ordinated Sciences (Double Award) Extended",           code: "0654/CX",    price: 3750, max: 100, syllabus: "0654" },
+    { name: "IGCSE Co-ordinated Sciences (Double Award) Core",               code: "0654/GX",    price: 3750, max: 100, syllabus: "0654" },
+  ],
+  igcse_ei: [
+    { name: "IGCSE Economics",                                                code: "0455/Y",     price: 3750, max: 100, syllabus: "0455" },
+    { name: "IGCSE English as a Second Language (Count-in Speaking)",        code: "0511/AX",    price: 3750, max: 100, syllabus: "0511" },
+    { name: "IGCSE English as a Second Language (Speaking Endorsement)",     code: "0510/AX",    price: 3750, max: 100, syllabus: "0510" },
+    { name: "IGCSE Environmental Management",                                 code: "0680/X",     price: 3750, max: 100, syllabus: "0680" },
+    { name: "IGCSE First Language Arabic",                                    code: "0508",       price: 3750, max: 100, syllabus: "0508" },
+    { name: "IGCSE First Language English (Oral Endorsement)",               code: "0500/BS",    price: 3750, max: 58,  syllabus: "0500" },
+    { name: "IGCSE First Language Setswana",                                  code: "0698/A",     price: 3750, max: 100, syllabus: "0698" },
+    { name: "IGCSE First Language Spanish",                                   code: "0502/AY",    price: 3750, max: 100, syllabus: "0502" },
+    { name: "IGCSE French",                                                   code: "0520/Y",     price: 3750, max: 100, syllabus: "0520" },
+    { name: "IGCSE Geography",                                                code: "0460/BY",    price: 3750, max: 100, syllabus: "0460" },
+    { name: "IGCSE German",                                                   code: "0525/Y",     price: 3750, max: 100, syllabus: "0525" },
+    { name: "IGCSE Hindi as a Second Language",                               code: "0549/A",     price: 3750, max: 100, syllabus: "0549" },
+    { name: "IGCSE History",                                                  code: "0470/BX",    price: 3750, max: 100, syllabus: "0470" },
+    { name: "IGCSE Information & Communication Technology",                  code: "0417/EX",    price: 3750, max: 100, syllabus: "0417" },
+    { name: "IGCSE IsiZulu as a Second Language",                             code: "0531/A",     price: 3750, max: 100, syllabus: "0531" },
+    { name: "IGCSE Islamiyat",                                                code: "0493/AX",    price: 3750, max: 100, syllabus: "0493" },
+  ],
+  igcse_lt: [
+    { name: "IGCSE Literature in English",                                    code: "0475/AY",    price: 3750, max: 100, syllabus: "0475" },
+    { name: "IGCSE Literature in English (Unseen Text)",                     code: "0475/BY",    price: 3750, max: 100, syllabus: "0475" },
+    { name: "IGCSE Literature in Spanish",                                    code: "0474/A",     price: 3750, max: 100, syllabus: "0474" },
+    { name: "IGCSE Marine Science",                                           code: "0697/AY",    price: 3750, max: 100, syllabus: "0697" },
+    { name: "IGCSE Mathematics (Without Coursework) Extended",               code: "0580/BX",    price: 3750, max: 74,  syllabus: "0580" },
+    { name: "IGCSE Mathematics (Without Coursework) Core",                   code: "0580/AX",    price: 3750, max: 74,  syllabus: "0580" },
+    { name: "IGCSE Physical Science Extended",                               code: "0652/CX",    price: 3750, max: 100, syllabus: "0652" },
+    { name: "IGCSE Physical Science Core",                                   code: "0652/GX",    price: 3750, max: 100, syllabus: "0652" },
+    { name: "IGCSE Physics Extended",                                        code: "0625/CX",    price: 3750, max: 83,  syllabus: "0625" },
+    { name: "IGCSE Physics Core",                                            code: "0625/GX",    price: 3750, max: 83,  syllabus: "0625" },
+    { name: "IGCSE Religious Studies",                                       code: "0490/AY",    price: 3750, max: 100, syllabus: "0490" },
+    { name: "IGCSE Sociology",                                               code: "0495/AY",    price: 3750, max: 100, syllabus: "0495" },
+    { name: "IGCSE Travel & Tourism",                                        code: "0471/AY",    price: 3750, max: 100, syllabus: "0471" },
+  ],
+  al_ac: [
+    { name: "AS Accounting",                                                              code: "9706/SX",   price: 4250, max: 98,  syllabus: "9706" },
+    { name: "A Accounting (AS already completed – Jun 2026)",                            code: "9706/BQ",   price: 5250, max: 98,  syllabus: "9706" },
+    { name: "A Accounting (AS already completed – Nov 2025)",                            code: "9706/CX",   price: 5250, max: 98,  syllabus: "9706" },
+    { name: "A Accounting (All papers)",                                                  code: "9706/AX",   price: 8500, max: 98,  syllabus: "9706" },
+    { name: "AS Afrikaans Language",                                                      code: "8679/SA",   price: 4250, max: 95,  syllabus: "8679" },
+    { name: "AS Biblical Studies",                                                        code: "9484/SY",   price: 4250, max: 100, syllabus: "9484" },
+    { name: "A Biblical Studies (AS already completed – Jun 2026)",                      code: "9484/BY",   price: 5250, max: 100, syllabus: "9484" },
+    { name: "A Biblical Studies (AS already completed – Nov 2025)",                      code: "9484/CY",   price: 5250, max: 100, syllabus: "9484" },
+    { name: "A Biblical Studies (All papers)",                                            code: "9484/AY",   price: 8500, max: 100, syllabus: "9484" },
+    { name: "AS Biology",                                                                 code: "9700/S3/4", price: 4750, max: 75,  syllabus: "9700" },
+    { name: "A Biology (AS already completed – Jun 2026)",                               code: "9700/BT",   price: 5250, max: 75,  syllabus: "9700" },
+    { name: "A Biology (AS already completed – Nov 2025)",                               code: "9700/CY",   price: 5250, max: 75,  syllabus: "9700" },
+    { name: "A Biology (All papers)",                                                     code: "9700/AY",   price: 9000, max: 75,  syllabus: "9700" },
+    { name: "AS Business",                                                                code: "9606/SX",   price: 4250, max: 99,  syllabus: "9606" },
+    { name: "A Business (AS already completed – Jun 2026)",                              code: "9606/BQ",   price: 5250, max: 99,  syllabus: "9606" },
+    { name: "A Business (AS already completed – Nov 2025)",                              code: "9606/CX",   price: 5250, max: 99,  syllabus: "9606" },
+    { name: "A Business (All papers)",                                                    code: "9606/AX",   price: 8500, max: 99,  syllabus: "9606" },
+    { name: "AS Chemistry",                                                               code: "9701/S3/4", price: 4750, max: 76,  syllabus: "9701" },
+    { name: "A Chemistry (AS already completed – Jun 2026)",                             code: "9701/BT",   price: 5250, max: 76,  syllabus: "9701" },
+    { name: "A Chemistry (AS already completed – Nov 2025)",                             code: "9701/CY",   price: 5250, max: 76,  syllabus: "9701" },
+    { name: "A Chemistry (All papers)",                                                   code: "9701/AY/HY",price: 9000, max: 76,  syllabus: "9701" },
+    { name: "A Chinese Language & Literature (All papers)",                              code: "9868/AY",   price: 5250, max: 100, syllabus: "9868", asterisk: true },
+    { name: "AS Classical Studies",                                                       code: "9274/SY",   price: 4250, max: 100, syllabus: "9274" },
+    { name: "A Classical Studies (AS already completed – Nov 2025)",                     code: "9274/CY",   price: 5250, max: 100, syllabus: "9274" },
+    { name: "A Classical Studies (All papers)",                                           code: "9274/AY",   price: 8500, max: 100, syllabus: "9274" },
+    { name: "AS Computer Science",                                                        code: "9618/SX",   price: 4250, max: 100, syllabus: "9618" },
+    { name: "A Computer Science (AS already completed – Jun 2026)",                      code: "9618/BQ",   price: 5250, max: 100, syllabus: "9618" },
+    { name: "A Computer Science (AS already completed – Nov 2025)",                      code: "9618/CX",   price: 5250, max: 100, syllabus: "9618" },
+    { name: "A Computer Science (All papers)",                                            code: "9618/AX",   price: 8500, max: 100, syllabus: "9618" },
+  ],
+  al_eh: [
+    { name: "AS Economics",                                                               code: "9708/SX",   price: 4250, max: 100, syllabus: "9708" },
+    { name: "A Economics (AS already completed – Jun 2026)",                             code: "9708/BX",   price: 5250, max: 100, syllabus: "9708" },
+    { name: "A Economics (AS already completed – Nov 2025)",                             code: "9708/CX",   price: 5250, max: 100, syllabus: "9708" },
+    { name: "A Economics (All papers)",                                                   code: "9708/AX",   price: 8500, max: 100, syllabus: "9708" },
+    { name: "AS English General Paper",                                                   code: "8021/X",    price: 4250, max: 100, syllabus: "8021" },
+    { name: "AS English Language",                                                        code: "9093/SY",   price: 4250, max: 55,  syllabus: "9093" },
+    { name: "A English Language (AS already completed – Jun 2026)",                      code: "9093/BT",   price: 5250, max: 55,  syllabus: "9093" },
+    { name: "A English Language (AS already completed – Nov 2025)",                      code: "9093/CY",   price: 5250, max: 55,  syllabus: "9093" },
+    { name: "A English Language (All papers)",                                            code: "9093/AY",   price: 8500, max: 55,  syllabus: "9093" },
+    { name: "AS Environmental Management",                                                code: "8291/AY",   price: 4250, max: 100, syllabus: "8291" },
+    { name: "AS French Language",                                                         code: "8028/SY",   price: 4250, max: 100, syllabus: "8028" },
+    { name: "AS Further Mathematics (Pure & Mechanics)",                                 code: "9231/S1",   price: 4250, max: 100, syllabus: "9231" },
+    { name: "AS Further Mathematics (Pure & Probability)",                               code: "9231/S2",   price: 4250, max: 100, syllabus: "9231" },
+    { name: "A Further Mathematics (Pure & Mechanics) (AS completed – Jun 2026)",       code: "9231/CQ",   price: 5250, max: 100, syllabus: "9231" },
+    { name: "A Further Mathematics (Pure & Mechanics) (AS completed – Nov 2025)",       code: "9231/EX",   price: 5250, max: 100, syllabus: "9231" },
+    { name: "A Further Mathematics (Pure & Probability) (AS completed – Jun 2026)",     code: "9231/BQ",   price: 5250, max: 100, syllabus: "9231" },
+    { name: "A Further Mathematics (Pure & Probability) (AS completed – Nov 2025)",     code: "9231/DX",   price: 5250, max: 100, syllabus: "9231" },
+    { name: "A Further Mathematics (All papers)",                                         code: "9231/AX",   price: 8500, max: 100, syllabus: "9231" },
+    { name: "AS Geography",                                                               code: "9696/SY",   price: 4250, max: 100, syllabus: "9696" },
+    { name: "A Geography (AS already completed – Jun 2026)",                             code: "9696/BT",   price: 5250, max: 100, syllabus: "9696" },
+    { name: "A Geography (AS already completed – Nov 2025)",                             code: "9696/CY",   price: 5250, max: 100, syllabus: "9696" },
+    { name: "A Geography (All papers)",                                                   code: "9696/AY",   price: 8500, max: 100, syllabus: "9696" },
+    { name: "AS German Language",                                                         code: "8027/SY",   price: 4250, max: 76,  syllabus: "8027" },
+    { name: "A German Language & Literature (All papers)",                               code: "9897/AY",   price: 5250, max: 95,  syllabus: "9897", asterisk: true },
+    { name: "AS Hinduism",                                                                code: "9487/S",    price: 4250, max: 100, syllabus: "9487" },
+    { name: "A Hinduism (AS already completed – Jun 2026)",                              code: "9487/B",    price: 5250, max: 100, syllabus: "9487" },
+    { name: "A Hinduism (AS already completed – Nov 2025)",                              code: "9487/C",    price: 5250, max: 100, syllabus: "9487" },
+    { name: "A Hinduism (All papers)",                                                    code: "9487/A",    price: 8500, max: 100, syllabus: "9487" },
+    { name: "AS History",                                                                 code: "9489/SX",   price: 4250, max: 100, syllabus: "9489" },
+    { name: "A History (AS already completed – Jun 2026)",                               code: "9489/BQ",   price: 5250, max: 100, syllabus: "9489" },
+    { name: "A History (AS already completed – Nov 2025)",                               code: "9489/CX",   price: 5250, max: 100, syllabus: "9489" },
+    { name: "A History (All papers)",                                                     code: "9489/AX",   price: 8500, max: 100, syllabus: "9489" },
+  ],
+  al_it: [
+    { name: "AS Information Technology",                                                  code: "9626/SY",   price: 4250, max: 100, syllabus: "9626" },
+    { name: "A Information Technology (AS already completed – Jun 2026)",                code: "9626/BY",   price: 5250, max: 100, syllabus: "9626" },
+    { name: "A Information Technology (AS already completed – Nov 2025)",                code: "9626/CY",   price: 5250, max: 100, syllabus: "9626" },
+    { name: "A Information Technology (All papers)",                                      code: "9626/AY",   price: 8500, max: 100, syllabus: "9626" },
+    { name: "AS Language & Literature in English",                                        code: "8695/AY",   price: 4250, max: 100, syllabus: "8695" },
+    { name: "AS Law",                                                                     code: "9084/SX",   price: 4250, max: 100, syllabus: "9084" },
+    { name: "A Law (AS already completed – Jun 2026)",                                   code: "9084/BX",   price: 5250, max: 100, syllabus: "9084" },
+    { name: "A Law (AS already completed – Nov 2025)",                                   code: "9084/CX",   price: 5250, max: 100, syllabus: "9084" },
+    { name: "A Law (All papers)",                                                         code: "9084/AX",   price: 8500, max: 100, syllabus: "9084" },
+    { name: "AS Literature in English",                                                   code: "9695/SY",   price: 4250, max: 100, syllabus: "9695" },
+    { name: "A Literature in English (AS already completed – Jun 2026)",                 code: "9695/BT",   price: 5250, max: 100, syllabus: "9695" },
+    { name: "A Literature in English (AS already completed – Nov 2025)",                 code: "9695/CY",   price: 5250, max: 100, syllabus: "9695" },
+    { name: "A Literature in English (All papers)",                                       code: "9695/AY",   price: 8500, max: 100, syllabus: "9695" },
+    { name: "AS Marine Science",                                                          code: "9693/SY",   price: 4250, max: 100, syllabus: "9693" },
+    { name: "A Marine Science (AS already completed – Jun 2026)",                        code: "9693/BY",   price: 5250, max: 100, syllabus: "9693" },
+    { name: "A Marine Science (AS already completed – Nov 2025)",                        code: "9693/CY",   price: 5250, max: 100, syllabus: "9693" },
+    { name: "A Marine Science (All papers)",                                              code: "9693/AY",   price: 8500, max: 100, syllabus: "9693" },
+    { name: "AS Mathematics (Pure 1 & Pure 2)",                                          code: "9709/S4",   price: 4250, max: 91,  syllabus: "9709" },
+    { name: "AS Mathematics (Pure 1 & Mechanics)",                                       code: "9709/S5",   price: 4250, max: 91,  syllabus: "9709" },
+    { name: "AS Mathematics (Pure 1 & Probability 1)",                                   code: "9709/S6",   price: 4250, max: 91,  syllabus: "9709" },
+    { name: "A Mathematics (Pure 3 & Prob1) (AS already completed – Jun 2026)",         code: "9709/DY",   price: 5250, max: 91,  syllabus: "9709" },
+    { name: "A Mathematics (Pure 3 & Mechanics) (AS already completed – Jun 2026)",     code: "9709/EY",   price: 5250, max: 91,  syllabus: "9709" },
+    { name: "A Mathematics (Pure 3 & Prob 2) (AS already completed – Jun 2026)",        code: "9709/GY",   price: 5250, max: 91,  syllabus: "9709" },
+    { name: "A Mathematics (Pure 3 & Prob1) (AS already completed – Nov 2025)",         code: "9709/HY",   price: 5250, max: 91,  syllabus: "9709" },
+    { name: "A Mathematics (Pure 3 & Mechanics) (AS already completed – Nov 2025)",     code: "9709/IY",   price: 5250, max: 91,  syllabus: "9709" },
+    { name: "A Mathematics (Pure 3 & Prob 2) (AS already completed – Nov 2025)",        code: "9709/KY",   price: 5250, max: 91,  syllabus: "9709" },
+    { name: "A Mathematics (Pure 1, Pure 3, Mechanics, Probability 1) (All papers)",    code: "9709/AY",   price: 8500, max: 91,  syllabus: "9709" },
+    { name: "A Mathematics (Pure 1, Pure 3, Probability 1, Probability 2) (All papers)",code: "9709/CY",   price: 8500, max: 91,  syllabus: "9709" },
+    { name: "AS Physics",                                                                 code: "9702/S3/4", price: 4750, max: 73,  syllabus: "9702" },
+    { name: "A Physics (AS already completed – Jun 2026)",                               code: "9702/BT",   price: 5250, max: 73,  syllabus: "9702" },
+    { name: "A Physics (AS already completed – Nov 2025)",                               code: "9702/CY",   price: 5250, max: 73,  syllabus: "9702" },
+    { name: "A Physics (All papers)",                                                     code: "9702/AY",   price: 9000, max: 73,  syllabus: "9702" },
+    { name: "AS Psychology",                                                              code: "9990/SX",   price: 4250, max: 100, syllabus: "9990" },
+    { name: "A Psychology (AS already completed – Jun 2026)",                            code: "9990/BX",   price: 5250, max: 100, syllabus: "9990" },
+    { name: "A Psychology (AS already completed – Nov 2025)",                            code: "9990/CX",   price: 5250, max: 100, syllabus: "9990" },
+    { name: "A Psychology (All papers)",                                                  code: "9990/AX",   price: 8500, max: 100, syllabus: "9990" },
+    { name: "AS Sociology",                                                               code: "9699/SX",   price: 4250, max: 100, syllabus: "9699" },
+    { name: "A Sociology (AS already completed – Jun 2026)",                             code: "9699/BX",   price: 5250, max: 100, syllabus: "9699" },
+    { name: "A Sociology (AS already completed – Nov 2025)",                             code: "9699/CX",   price: 5250, max: 100, syllabus: "9699" },
+    { name: "A Sociology (All papers)",                                                   code: "9699/AX",   price: 8500, max: 100, syllabus: "9699" },
+    { name: "A Spanish Language & Literature (All papers)",                              code: "9844/AY",   price: 5250, max: 100, syllabus: "9844", asterisk: true },
+    { name: "AS Thinking Skills",                                                         code: "9694/SY",   price: 4250, max: 100, syllabus: "9694" },
+    { name: "A Thinking Skills (AS already completed – Jun 2026)",                       code: "9694/BY",   price: 5250, max: 100, syllabus: "9694" },
+    { name: "A Thinking Skills (AS already completed – Nov 2025)",                       code: "9694/CY",   price: 5250, max: 100, syllabus: "9694" },
+    { name: "A Thinking Skills (All papers)",                                             code: "9694/AY",   price: 8500, max: 100, syllabus: "9694" },
+  ]
+};
+
+// Simulated current registrations (in production this comes from your database)
+const CURRENT_REGISTRATIONS = {};
+Object.keys(SUBJECTS).forEach(group => {
+  SUBJECTS[group].forEach(s => { CURRENT_REGISTRATIONS[s.code] = 0; });
+});
+const ALL_GROUPS = ['igcse_ac','igcse_ei','igcse_lt','al_ac','al_eh','al_it'];
+
+let selectedSubjects = [];
+let uploadedFiles = { birth: null, payment: null, access: null };
+
+// ── Build subject lists ──
+function getEffectivePrice(basePrice) {
+  return IS_LATE ? basePrice + LATE_FEE_SURCHARGE : basePrice;
+}
+
+function buildSubjectList(containerId, subjects) {
+  const container = document.getElementById(containerId);
+  subjects.forEach((subj) => {
+    const taken = CURRENT_REGISTRATIONS[subj.code] || 0;
+    const isFull = subj.max !== null && taken >= subj.max;
+    const effectivePrice = getEffectivePrice(subj.price);
+    const row = document.createElement('div');
+    row.className = 'subject-row' + (isFull ? ' full-row' : '');
+    row.dataset.code = subj.code;
+    row.dataset.price = effectivePrice;
+    row.dataset.baseprice = subj.price;
+    row.dataset.name = subj.name;
+    row.dataset.syllabus = subj.syllabus;
+    if (!isFull) row.onclick = () => toggleSubject(row, subj);
+
+    const asteriskNote = subj.asterisk ? ' <span style="color:var(--gold);font-size:0.75rem;" title="Price to be verified">*</span>' : '';
+    const lateTag = IS_LATE ? `<span style="font-size:0.65rem;background:#fff3cd;color:#856404;padding:2px 7px;border-radius:10px;font-weight:700;">+N$${LATE_FEE_SURCHARGE.toLocaleString()} late fee</span>` : '';
+
+    row.innerHTML = `
+      <div class="subject-checkbox"></div>
+      <div class="subject-name">${subj.name}${asteriskNote} <span class="subject-code">(${subj.code})</span></div>
+      ${isFull ? '<span class="subject-full-tag">Full</span>' : lateTag}
+      <div class="subject-price">N$${effectivePrice.toLocaleString()}</div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function toggleSubject(row, subj) {
+  const idx = selectedSubjects.findIndex(s => s.code === subj.code);
+  if (idx >= 0) {
+    // Deselecting — re-enable all rows with same syllabus
+    selectedSubjects.splice(idx, 1);
+    row.classList.remove('selected');
+    document.querySelectorAll('.subject-row[data-syllabus="' + subj.syllabus + '"]').forEach(r => {
+      if (!r.classList.contains('full-row')) {
+        r.classList.remove('syllabus-locked');
+        r.onclick = () => toggleSubject(r, getAllSubjects().find(s => s.code === r.dataset.code));
+      }
+    });
+  } else {
+    // Selecting — lock all other rows with same syllabus
+    const effectivePrice = getEffectivePrice(subj.price);
+    selectedSubjects.push({ ...subj, price: effectivePrice });
+    row.classList.add('selected');
+    document.querySelectorAll('.subject-row[data-syllabus="' + subj.syllabus + '"]').forEach(r => {
+      if (r.dataset.code !== subj.code && !r.classList.contains('full-row')) {
+        r.classList.add('syllabus-locked');
+        r.onclick = null;
+      }
+    });
+  }
+  updateTotals();
+}
+
+function getAllSubjects() {
+  return ALL_GROUPS.flatMap(g => SUBJECTS[g]);
+}
+
+function updateTotals() {
+  const total = selectedSubjects.reduce((sum, s) => sum + s.price, 0);
+  document.getElementById('subject-count').textContent = selectedSubjects.length;
+  document.getElementById('running-total').textContent = 'N$' + total.toLocaleString();
+  document.getElementById('btn-to-payment').disabled = selectedSubjects.length === 0;
+  updateFeeSummary();
+  updateGroupHeaders();
+}
+
+function updateFeeSummary() {
+  const lines = document.getElementById('fee-lines');
+  lines.innerHTML = '';
+  selectedSubjects.forEach(s => {
+    lines.innerHTML += `<div class="fee-line"><span>${s.name}</span><span>N$${s.price.toLocaleString()}</span></div>`;
+  });
+  const total = selectedSubjects.reduce((sum, s) => sum + s.price, 0);
+  document.getElementById('fee-total-display').textContent = 'N$' + total.toLocaleString();
+  const payEl = document.getElementById('payment-total-amount');
+  if (payEl) payEl.textContent = 'N$' + total.toLocaleString();
+}
+
+// ── File uploads ──
+function handleUpload(type, input) {
+  if (input.files && input.files[0]) {
+    uploadedFiles[type] = input.files[0];
+    const listEl = document.getElementById(type + '-files');
+    listEl.innerHTML = `
+      <div class="file-item">
+        <span>📎</span>
+        <span class="file-name">${input.files[0].name}</span>
+        <button class="remove-file" onclick="removeFile('${type}')">×</button>
+      </div>`;
+    document.getElementById('err-' + (type === 'birth' ? 'birth' : type === 'payment' ? 'payment' : '')).classList.remove('show');
+    updateSubmitBtn();
+  }
+}
+
+function removeFile(type) {
+  uploadedFiles[type] = null;
+  document.getElementById(type + '-files').innerHTML = '';
+  document.getElementById('upload-' + type).value = '';
+  updateSubmitBtn();
+}
+
+function updateSubmitBtn() {
+  const termsOk = document.getElementById('terms-check').checked;
+  const birthOk = !!uploadedFiles.birth;
+  const paymentOk = !!uploadedFiles.payment;
+  document.getElementById('btn-submit').disabled = !(termsOk && birthOk && paymentOk);
+}
+
+// ── Navigation ──
+function goToScreen(num) {
+  if (num === 2 && !validateScreen1()) return;
+  if (num === 3 && selectedSubjects.length === 0) return;
+
+  // Show access arrangement upload if needed
+  if (num === 3) {
+    const access = document.getElementById('access').value;
+    document.getElementById('access-upload-section').style.display =
+      access !== 'No' ? 'block' : 'none';
+    updateFeeSummary();
+  }
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + num).classList.add('active');
+
+  document.querySelectorAll('.step-tab').forEach((t, i) => {
+    t.classList.remove('active', 'done');
+    if (i + 1 < num) t.classList.add('done');
+    if (i + 1 === num) t.classList.add('active');
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Validation ──
+function validateScreen1() {
+  let valid = true;
+  const fields = [
+    { id: 'surname',   errId: 'err-surname' },
+    { id: 'firstname', errId: 'err-firstname' },
+    { id: 'email',     errId: 'err-email' },
+    { id: 'phone',     errId: 'err-phone' },
+    { id: 'gender',    errId: 'err-gender' },
+    { id: 'dob',         errId: 'err-dob' },
+    { id: 'alt-phone',   errId: 'err-alt-phone' },
+    { id: 'alt-contact', errId: 'err-alt-contact' },
+  ];
+  fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    const err = document.getElementById(f.errId);
+    if (!el.value.trim()) {
+      el.classList.add('error');
+      err.classList.add('show');
+      valid = false;
+    } else {
+      el.classList.remove('error');
+      err.classList.remove('show');
+    }
+  });
+  // Phone format check
+  ['phone', 'alt-phone'].forEach(pid => {
+    const pel = document.getElementById(pid);
+    const perr = document.getElementById('err-' + pid);
+    if (pel.value && !validatePhone(pel.value)) {
+      pel.classList.add('error');
+      perr.classList.add('show');
+      valid = false;
+    }
+  });
+
+  // Email format check
+  const emailEl = document.getElementById('email');
+  if (emailEl.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)) {
+    emailEl.classList.add('error');
+    document.getElementById('err-email').classList.add('show');
+    valid = false;
+  }
+  // Other centre check
+  if (document.getElementById('centre').value === 'Other') {
+    const otherEl = document.getElementById('other-centre');
+    const otherErr = document.getElementById('err-other-centre');
+    if (!otherEl.value.trim()) {
+      otherEl.classList.add('error');
+      otherErr.classList.add('show');
+      valid = false;
+    } else {
+      otherEl.classList.remove('error');
+      otherErr.classList.remove('show');
+    }
+  }
+  return valid;
+}
+
+// ── Phone formatting ──
+function formatPhone(input) {
+  let val = input.value;
+
+  // Auto-insert opening bracket if not there
+  if (val.length === 1 && val !== '(') {
+    val = '(' + val;
+  }
+
+  // Auto-insert closing bracket + nothing after digits
+  // Allow only: (, ), digits
+  val = val.replace(/[^0-9()]/g, '');
+
+  // Ensure format starts with (
+  if (val && val[0] !== '(') val = '(' + val;
+
+  // Auto close bracket after country code (max 4 digits inside brackets)
+  const openIdx = val.indexOf('(');
+  const closeIdx = val.indexOf(')');
+  if (openIdx !== -1 && closeIdx === -1) {
+    const inside = val.slice(openIdx + 1);
+    if (inside.length >= 3) {
+      val = val.slice(0, openIdx + 1) + inside.slice(0, inside.length) ;
+    }
+  }
+
+  input.value = val;
+}
+
+function validatePhone(value) {
+  // Must match (digits)digits — country code 1-4 digits, number 6-12 digits
+  return /^\(\d{1,4}\)\d{6,12}$/.test(value);
+}
+
+// ── Toggle collapsible subject group ──
+function toggleGroup(id) {
+  const body = document.getElementById(id);
+  const header = body.previousElementSibling;
+  body.classList.toggle('collapsed');
+  header.classList.toggle('collapsed');
+}
+
+function updateGroupHeaders() {
+  const groups = ['igcse-ac','igcse-ei','igcse-lt','al-ac','al-eh','al-it'];
+  groups.forEach(id => {
+    const body = document.getElementById(id);
+    const header = body.previousElementSibling;
+    const hasSelected = body.querySelector('.subject-row.selected');
+    if (hasSelected) header.classList.add('has-selection');
+    else header.classList.remove('has-selection');
+  });
+}
+
+// ── Toggle Other Centre ──
+function toggleOtherCentre() {
+  const val = document.getElementById('centre').value;
+  const group = document.getElementById('other-centre-group');
+  group.style.display = val === 'Other' ? 'block' : 'none';
+  if (val !== 'Other') {
+    document.getElementById('other-centre').value = '';
+    document.getElementById('err-other-centre').classList.remove('show');
+  }
+}
+
+// ── Supabase config ──
+const SUPABASE_URL = 'https://crvncexckcqyjnjeaaeq.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_31cJiumpd9xO_ErQkDAmQA_UrOSJBad';
+const SUPABASE_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNydm5jZXhja2NxeWpuamVhYWVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2Mzg1MDAsImV4cCI6MjA5NjIxNDUwMH0.vRgyfytK8Q-74iUcmNQH9GOBWhBvurb9XerPze1p3Zw';
+
+// ── Upload a single file to Supabase Storage ──
+async function uploadFile(file, refNum, label) {
+  if (!file) return null;
+  const ext = file.name.split('.').pop();
+  const path = refNum + '/' + label + '.' + ext;
+  const response = await fetch(SUPABASE_URL + '/storage/v1/object/registrations/' + path, {
+    method: 'POST',
+    headers: {
+      'apikey':        SUPABASE_JWT,
+      'Authorization': 'Bearer ' + SUPABASE_JWT,
+      'Content-Type':  file.type,
+      'x-upsert':      'true'
+    },
+    body: file
+  });
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error('File upload failed (' + label + '): ' + err);
+  }
+  return path;
+}
+
+// ── Submit ──
+async function submitRegistration() {
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.textContent = 'Saving registration...';
+
+  const refNum = 'DHPS-2026-' + String(Math.floor(Math.random() * 9000) + 1000);
+
+  // Work out final centre value
+  const centreVal = document.getElementById('centre').value;
+  const finalCentre = centreVal === 'Other'
+    ? document.getElementById('other-centre').value
+    : centreVal;
+
+  // Build subjects summary string
+  const subjectsSummary = selectedSubjects.map(s => s.name + ' (' + s.code + ') - N$' + s.price.toLocaleString()).join(' | ');
+  const totalFee = selectedSubjects.reduce((sum, s) => sum + s.price, 0);
+
+  // Build initial files summary from filenames
+  const filesSummary = Object.entries(uploadedFiles)
+    .filter(([k, v]) => v !== null)
+    .map(([k, v]) => k + ': ' + v.name)
+    .join(', ');
+
+  const registration = {
+    reference_number:       refNum,
+    surname:                document.getElementById('surname').value.trim(),
+    firstname:              document.getElementById('firstname').value.trim(),
+    email:                  document.getElementById('email').value.trim(),
+    phone:                  document.getElementById('phone').value.trim(),
+    gender:                 document.getElementById('gender').value,
+    dob:                    document.getElementById('dob').value,
+    access_arrangements:    document.getElementById('access').value,
+    english_first_language: document.getElementById('english').value,
+    alt_phone:              document.getElementById('alt-phone').value.trim(),
+    alt_contact:            document.getElementById('alt-contact').value.trim(),
+    centre:                 finalCentre,
+    prev_centre:            document.getElementById('prev-centre').value.trim(),
+    prev_candidate:         document.getElementById('prev-candidate').value.trim(),
+    subjects:               subjectsSummary,
+    total_fee:              totalFee,
+    files_uploaded:         filesSummary,
+  };
+
+  try {
+    // ── Step 1: Save registration to database first ──
+    const response = await fetch(SUPABASE_URL + '/rest/v1/registrations', {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'apikey':        SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer':        'return=minimal'
+      },
+      body: JSON.stringify(registration)
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error('Registration save failed: ' + errorText);
+    }
+
+    // ── Step 2: Upload files (non-blocking — registration already saved) ──
+    btn.textContent = 'Uploading documents...';
+    try {
+      await uploadFile(uploadedFiles.birth,   refNum, 'birth-certificate');
+      await uploadFile(uploadedFiles.payment, refNum, 'proof-of-payment');
+      await uploadFile(uploadedFiles.access,  refNum, 'access-arrangements');
+    } catch (fileErr) {
+      // Files failed but registration is saved — log and continue
+      console.warn('File upload issue (registration still saved):', fileErr);
+    }
+
+    document.getElementById('ref-display').textContent = 'REF: ' + refNum;
+    goToScreen(4);
+
+  } catch (err) {
+    console.error('Submission error:', err);
+    btn.disabled = false;
+    btn.textContent = 'Submit Registration ✓';
+    alert('There was a problem submitting your registration. Please check your internet connection and try again. If the problem persists, please contact the school directly.');
+  }
+}
+
+// ── Init ──
+(function checkDates() {
+  const banner = document.getElementById('status-banner');
+
+  if (IS_NOT_OPEN) {
+    banner.style.display = 'block';
+    banner.style.cssText = 'background:var(--navy);color:white;text-align:center;padding:14px 20px;font-weight:600;font-size:0.95rem;';
+    banner.textContent = 'Registration for the November 2026 examination series opens on 10 June 2026.';
+    document.querySelector('.progress-wrap').style.display = 'none';
+    document.querySelector('.container').innerHTML = '<div style="text-align:center;padding:60px 20px;"><h2 style="color:var(--navy);font-family:Playfair Display,serif;margin-bottom:16px;">Registration Not Yet Open</h2><p style="color:#666;">Registration for the November 2026 Cambridge examination series opens on <strong>10 June 2026</strong>. Please check back then.</p></div>';
+    return;
+  }
+
+  if (IS_CLOSED) {
+    banner.style.display = 'block';
+    banner.style.cssText = 'background:#c0392b;color:white;text-align:center;padding:14px 20px;font-weight:600;font-size:0.95rem;';
+    banner.textContent = 'Registration for the November 2026 examination series has now closed. No further registrations are being accepted.';
+    document.querySelector('.progress-wrap').style.display = 'none';
+    document.querySelector('.container').innerHTML = '<div style="text-align:center;padding:60px 20px;"><h2 style="color:var(--navy);font-family:Playfair Display,serif;margin-bottom:16px;">Registration Closed</h2><p style="color:#666;">The registration period for the November 2026 Cambridge examination series ended on 7 August 2026. Please contact the school directly if you have any queries.</p></div>';
+    return;
+  }
+
+  if (IS_LATE) {
+    banner.style.display = 'block';
+    banner.style.cssText = 'background:#856404;color:white;text-align:center;padding:14px 20px;font-weight:600;font-size:0.95rem;';
+    banner.textContent = 'Late registration is now open. A surcharge of N$1,250 per subject applies. Registration closes on 7 August 2026.';
+    // Disable access arrangements during late period
+    setTimeout(() => {
+      const accessSelect = document.getElementById('access');
+      const accessNotice = document.getElementById('access-closed-notice');
+      if (accessSelect) { accessSelect.value = 'No'; accessSelect.disabled = true; }
+      if (accessNotice) accessNotice.style.display = 'block';
+    }, 100);
+  }
+
+  if (IS_STANDARD) {
+    banner.style.display = 'block';
+    banner.style.cssText = 'background:var(--green);color:white;text-align:center;padding:14px 20px;font-weight:600;font-size:0.95rem;';
+    banner.textContent = 'Registration is open. Standard registration and access arrangement requests close on 17 July 2026.';
+  }
+})();
+
+buildSubjectList('igcse-ac', SUBJECTS.igcse_ac);
+buildSubjectList('igcse-ei', SUBJECTS.igcse_ei);
+buildSubjectList('igcse-lt', SUBJECTS.igcse_lt);
+buildSubjectList('al-ac',    SUBJECTS.al_ac);
+buildSubjectList('al-eh',    SUBJECTS.al_eh);
+buildSubjectList('al-it',    SUBJECTS.al_it);
+// Start all groups collapsed
+document.querySelectorAll('.group-body').forEach(b => b.classList.add('collapsed'));
+document.querySelectorAll('.group-header').forEach(h => h.classList.add('collapsed'));
+</script>
+</body>
+</html>
